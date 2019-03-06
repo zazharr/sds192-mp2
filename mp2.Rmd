@@ -2,7 +2,9 @@
 title: "Mini-Project 2"
 author: "Your Name Here"
 date: "2019-03-24"
-output: html_document
+output: 
+  html_document:
+    code_folding: show
 ---
 
 
@@ -10,12 +12,12 @@ output: html_document
 
 This project is so interesting and relevant to my life!
 
-```{r, include=FALSE}
+```{r, message=FALSE}
+library(tidyverse)
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
-
 
 > Word count: `r wordcountaddin::word_count()`
