@@ -1,59 +1,15 @@
 ---
 title: "Mini-Project 2"
-author: "Your Name Here"
-date: "2019-03-24"
-output: 
-  html_document:
     code_folding: show
+title: "MP2"
+author: "Zoya Azhar"
+date: "March 20, 2019"
+output: html_document
 ---
 
-
-## Loading the data
-
-This project is so interesting and relevant to my life!
-
-```{r, message=FALSE}
-library(tidyverse)
+```{r}
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
-
-## Some basic EDA
-
-- How many candidates running for what offices?
-
-```{r}
-candidates %>%
-  group_by(cand_election_yr, cand_office, cand_office_state) %>%
-  summarize(num_candidates = n()) %>%
-  print(n = Inf)
-```
-
-Note that this appears to be cumulative!
-
-- How many committees [by type](https://classic.fec.gov/finance/disclosure/metadata/CommitteeTypeCodes.shtml)?
-
-```{r}
-committees %>%
-  group_by(cmte_type) %>%
-  summarize(num_committees = n(), 
-            cand_ids = sum(cand_id > "")) %>%
-  arrange(desc(num_committees))
-```
-
-- What types of contributions are there and where do they go?
-
-```{r}
-contributions %>%
-  group_by(entity_type) %>%
-  summarize(num_contributions = n(), 
-            total_amount = sum(transaction_amt), 
-            other_ids = sum(other_id > ""),
-            cand_ids = sum(cand_id > "")) %>%
-  arrange(desc(num_contributions))
-```
-
-
-> Word count: `r wordcountaddin::word_count()`
