@@ -17,15 +17,13 @@ load("committees.rda")
 load("contributions.rda")
 ```
 
-
-```{r}
-
+```{r message = FALSE}
 table1<- candidates %>%
   full_join(house_elections, by = c("cand_id" = "fec_id")) 
  
 ```
 
-```{r}
+```{r message = FALSE}
 table1%>%
   group_by(cand_state) %>%
   summarize(N= n())%>%
