@@ -6,7 +6,7 @@ date: "March 20, 2019"
 output: html_document
 ---
 
-```{r}
+```{r message = FALSE}
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
