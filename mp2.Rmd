@@ -1,8 +1,7 @@
 ---
 title: "Mini-Project 2"
     code_folding: show
-title: "MP2"
-author: "Zoya Azhar"
+author: "Zoya and Ruth"
 date: "March 20, 2019"
 output: html_document
 ---
