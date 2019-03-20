@@ -6,9 +6,30 @@ date: "March 20, 2019"
 output: html_document
 ---
 
+```{r message=FALSE}
+library(tidyverse)
+```
+
 ```{r message = FALSE}
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+```
+
+
+```{r}
+
+table1<- candidates %>%
+  full_join(house_elections, by = c("cand_id" = "fec_id")) 
+ 
+```
+
+```{r}
+table1%>%
+  group_by(cand_state) %>%
+  summarize(N= n())%>%
+  #filter(cand_state == "NY") %>%
+  arrange(desc(N))
+  
 ```
