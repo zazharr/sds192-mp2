@@ -6,11 +6,9 @@ date: "March 20, 2019"
 output: html_document
 ---
 
-
-> Word count: `r wordcountaddin::word_count()`
-=======
 ```{r message=FALSE}
 library(tidyverse)
+library(Stat2Data)
 ```
 
 ```{r message = FALSE}
@@ -21,16 +19,47 @@ load("contributions.rda")
 ```
 
 ```{r message = FALSE}
-table1<- candidates %>%
-  full_join(house_elections, by = c("cand_id" = "fec_id")) 
- 
+
+#Get data for primary votes per candidate, candidate office and candidate state in one table
+table1 <- candidates %>%
+  full_join(house_elections, by = c("cand_id" = "fec_id")) %>%
+  filter(cand_office == "H") %>%
+  select(cand_id,cand_name,cand_state,primary_votes) %>%
+  filter(!is.na(primary_votes))
+#note that we filtered out all folks running for House, who had missing data for primary votes
+#originally 4160 candidates
+#missing data brought it down to 2157
 ```
+
+```{r}
+#create table with total primary votes per state
+table2 <- table1 %>%
+  group_by(cand_state) %>%
+  summarise(total_state_vote = sum(primary_votes))
+```
+
+```{r}
+#find out how many total votes in our dataframe
+table2 %>% 
+  mutate(proportion = total_state_vote/summarise(sum(total_state_vote)))
+
+
+ #28444796
+```
+
+
+
 
 ```{r message = FALSE}
 table1%>%
-  group_by(cand_state) %>%
+  group_by(cand_office_state) %>%
   summarize(N= n())%>%
   #filter(cand_state == "NY") %>%
   arrange(desc(N))
-  
 ```
+
+```{r}
+tally(~"cand_office", data = candidates1)
+```
+
+Word count: `r wordcountaddin::word_count()
