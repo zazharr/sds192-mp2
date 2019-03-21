@@ -7,7 +7,30 @@ output: html_document
 ---
 
 
-
-
-
 > Word count: `r wordcountaddin::word_count()`
+=======
+```{r message=FALSE}
+library(tidyverse)
+```
+
+```{r message = FALSE}
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+```
+
+```{r message = FALSE}
+table1<- candidates %>%
+  full_join(house_elections, by = c("cand_id" = "fec_id")) 
+ 
+```
+
+```{r message = FALSE}
+table1%>%
+  group_by(cand_state) %>%
+  summarize(N= n())%>%
+  #filter(cand_state == "NY") %>%
+  arrange(desc(N))
+  
+```
