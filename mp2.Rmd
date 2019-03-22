@@ -1,37 +1,39 @@
 ---
 title: "Mini-Project 2"
-    code_folding: show
 author: "Zoya and Ruth"
 date: "March 20, 2019"
-output: html_document
+output:
+  html_document:
+    code_folding: hide
 ---
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(Stat2Data)
+library(ggplot2)
 ```
 
-```{r message = FALSE}
+```{r message = FALSE, warning=FALSE}
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
 
-```{r message = FALSE}
+```{r message = FALSE, warning=FALSE}
 
 #Get data for primary votes per candidate, candidate office and candidate state in one table
 table1 <- candidates %>%
   full_join(house_elections, by = c("cand_id" = "fec_id")) %>%
   filter(cand_office == "H") %>%
-  select(cand_id,cand_name,cand_state,primary_votes) %>%
+  select(cand_id,cand_name,cand_state,primary_votes,party) %>%
   filter(!is.na(primary_votes))
 #note that we filtered out all folks running for House, who had missing data for primary votes
 #originally 4160 candidates
 #missing data brought it down to 2157
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 #create table with total primary votes per state
 table2 <- table1 %>%
   group_by(cand_state) %>%
@@ -40,26 +42,18 @@ table2 <- table1 %>%
 
 ```{r}
 #find out how many total votes in our dataframe
-table2 %>% 
-  mutate(proportion = total_state_vote/summarise(sum(total_state_vote)))
-
-
- #28444796
-```
-
-
-
-
-```{r message = FALSE}
-table1%>%
-  group_by(cand_office_state) %>%
-  summarize(N= n())%>%
-  #filter(cand_state == "NY") %>%
-  arrange(desc(N))
+table3 <- table2 %>% 
+  mutate(proportion = total_state_vote/sum(total_state_vote))
+  #filter(proportion > 0.50) #filter according to the percentage political scientists consider good voter turnout
 ```
 
 ```{r}
-tally(~"cand_office", data = candidates1)
+graph1 <- ggplot(table3, aes(x = cand_state, y = proportion)) +
+  geom_col(fill="purple", alpha = 0.5) 
+graph1
 ```
 
-Word count: `r wordcountaddin::word_count()
+```{r}
+#r wordcountaddin::word_count()
+```
+
