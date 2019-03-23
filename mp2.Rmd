@@ -8,7 +8,6 @@ output:
 ---
 
 ##Voter turnout for House of Representative candidates, as a national proportion
-s
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -42,11 +41,10 @@ table2 <- table1 %>%
   summarise(total_state_vote = sum(primary_votes))
 ```
 
-#Importing state population from excel
 ```{r}
+#Importing state population from excel
 state_population <- read.csv("state_population.csv")
 ```
-
 
 ```{r}
 population_data <- state_population %>%
@@ -55,21 +53,35 @@ population_data <- state_population %>%
 
 ```
 
-#Joining population_data and table2
 ```{r}
 
+#Joining population_data and table2
 table3<-population_data %>%
   left_join(table2, by= "cand_state")
 ```
 
 
+```{r}
 
 #Proportions
-```{r}
 final_table <- table3 %>%
   mutate(proportion= total_state_vote/avg_pop)
 ```
 
+```{r}
+#FUNCTION-WRITING
+
+state_turnout <- function(prop_arg) {
+  final_table %>%
+    mutate(proportion= total_state_vote/avg_pop) %>%
+    filter(proportion>prop_arg) %>%
+    ggplot(aes(x = cand_state, y = proportion)) +
+    geom_col(fill = "purple", alpha = 0.5) + scale_y_continuous(labels=scales::percent)
+}
+
+state_turnout(0.12)
+
+```
 
 
 #Data Visualization
@@ -85,3 +97,7 @@ graph1 +
 ```{r}
 #r wordcountaddin::word_count()
 ```
+
+blog:
+House of Rep. candidates from each state received a proportion of vote within the state. DC candidates received over 60% of state vote, implying that 40% of population is either not registered to vote, is not of voting age or decided not to cast a vote. The data graphic shows voter turnout per state, and that all candidates have very small voting populations within their state whose vote they are fighting to gain.
+
