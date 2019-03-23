@@ -8,7 +8,7 @@ output:
 ---
 
 ##Voter turnout for House of Representative candidates, as a national proportion
-s
+
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
@@ -41,20 +41,6 @@ table2 <- table1 %>%
   summarise(total_state_vote = sum(primary_votes))
 ```
 
-```{r}
-#find out how many total votes in our dataframe
-table3 <- table2 %>% 
-  mutate(proportion = total_state_vote/sum(total_state_vote))
-  #filter(proportion > 0.50) #filter according to the percentage political scientists consider good voter turnout
-```
-
-```{r}
-graph1 <- ggplot(table3, aes(x = cand_state, y = proportion)) +
-  geom_col(fill="purple", alpha = 0.5) 
-graph1
-```
-
-
 #Importing state population from excel
 ```{r}
 state_population <- read.csv("state_population.csv")
@@ -63,16 +49,38 @@ state_population <- read.csv("state_population.csv")
 
 ```{r}
 population_data <- state_population %>%
-  rename(cand_state=table.with.row.headers.in.column.A.and.column.headers.in.rows.3.through.4...leading.dots.indicate.sub.parts., "2011"= X, "2012"=X.1)
+  rename(cand_state=table.with.row.headers.in.column.A.and.column.headers.in.rows.3.through.4...leading.dots.indicate.sub.parts., "pop_2011"= X, "pop_2012"=X.1) %>%
+  mutate(avg_pop= (pop_2011 + pop_2012)/2)
 
-avg <- population_data %>%
-  avg <- c("2011","2012")
-
-population_data %>%
-  mutate(avg_st_pop= mean(avg))
 ```
-#Mean
+
+#Joining population_data and table2
+```{r}
+
+table3<-population_data %>%
+  left_join(table2, by= "cand_state")
+```
+
+
+
+#Proportions
+```{r}
+final_table <- table3 %>%
+  mutate(proportion= total_state_vote/avg_pop)
+```
+
+
+
+#Data Visualization
+```{r}
+graph1<- ggplot(data = final_table, aes(x=cand_state, y= proportion)) +
+  geom_col(fill="purple", alpha= 0.5)
+
+graph1 +
+  scale_y_continuous(labels=scales::percent)
+```
+
+
 ```{r}
 #r wordcountaddin::word_count()
 ```
-
