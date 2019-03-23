@@ -54,6 +54,24 @@ graph1 <- ggplot(table3, aes(x = cand_state, y = proportion)) +
 graph1
 ```
 
+
+#Importing state population from excel
+```{r}
+state_population <- read.csv("state_population.csv")
+```
+
+
+```{r}
+population_data <- state_population %>%
+  rename(cand_state=table.with.row.headers.in.column.A.and.column.headers.in.rows.3.through.4...leading.dots.indicate.sub.parts., "2011"= X, "2012"=X.1)
+
+avg <- population_data %>%
+  avg <- c("2011","2012")
+
+population_data %>%
+  mutate(avg_st_pop= mean(avg))
+```
+#Mean
 ```{r}
 #r wordcountaddin::word_count()
 ```
