@@ -71,7 +71,7 @@ avg <- population_data %>%
 population_data %>%
   mutate(avg_st_pop= mean(avg))
 ```
-
+#Mean
 ```{r}
 #r wordcountaddin::word_count()
 ```
