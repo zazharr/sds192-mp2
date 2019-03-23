@@ -6,7 +6,7 @@ output:
   html_document:
     code_folding: hide
 ---
-s
+
 ##Voter turnout for House of Representative candidates, as a national proportion
 
 ```{r message=FALSE, warning=FALSE}
