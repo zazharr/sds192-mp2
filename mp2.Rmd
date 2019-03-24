@@ -18,6 +18,9 @@ We were interested in state voter turnout. Regardless of who the votes were cast
 ```{r message = FALSE, warning = FALSE}
 library(tidyverse)
 library(ggplot2)
+#install.packages("devtools")
+#library(devtools)
+#install_github("benmarwick/wordcountaddin")
 ```
 
 
@@ -110,10 +113,8 @@ state_turnout <- function(prop_arg) {
     labs(y = "Votes cast as percentage of state pop. (primaries)")
 }
 
-state_turnout(0.10)
-
 # ^ Display how many states had equal to/over 10% of their population cast votes
-
+state_turnout(0.10)
 ```
 
 Our graph shows what percentage of the state population actually cast a vote for a House of Representative candidate, regardless of political party. 
