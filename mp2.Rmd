@@ -7,12 +7,19 @@ output:
     code_folding: hide
 ---
 
-##Voter turnout for House of Representative candidates, as a national proportion
+#How many people from your state voted for any House of Rep. candidates at all?
 
-```{r message=FALSE, warning=FALSE}
+
+In the United States, the U.S. House of Representatives is one of the two chambers of Congress. There are 435 elected members of the House and the number representing each state is determined by population. For instance, the United States Census Bureau's data for 2011-2012 tells us that California's average state population size during the 2011-2012 election cycle was 3,784,3967.5 people. This was the largest state population in the US, and naturally, California had the most seats in the House by default.
+
+We were interested in state voter turnout. Regardless of who the votes were cast for and how many candidates were running and for what platforms, how many votes were cast at all? This is important because media pundits and political scientists are frequently heard stressing the importance of 'getting the vote out' and making sure people know that exercising their right to vote is crucial for determining election results.
+(It is important to note that one can only vote for candidates running from/for the state one legally resides in.) 
+
+```{r message = FALSE, warning = FALSE}
 library(tidyverse)
 library(ggplot2)
 ```
+
 
 ```{r message = FALSE, warning=FALSE}
 load("house_elections.rda")
@@ -21,83 +28,126 @@ load("committees.rda")
 load("contributions.rda")
 ```
 
-```{r message = FALSE, warning=FALSE}
 
-#Get data for primary votes per candidate, candidate office and candidate state in one table
+```{r message = FALSE, warning=FALSE}
+# Get data for primary votes per House candidate, and candidate states in one table
+
 table1 <- candidates %>%
   full_join(house_elections, by = c("cand_id" = "fec_id")) %>%
   filter(cand_office == "H") %>%
-  select(cand_id,cand_name,cand_state,primary_votes,party) %>%
+  select(cand_id,cand_name,cand_state,primary_votes) %>%
   filter(!is.na(primary_votes))
-#note that we filtered out all folks running for House, who had missing data for primary votes
-#originally 4160 candidates
-#missing data brought it down to 2157
+
+# note that we filtered out all folks running for House, who had missing data for primary votes
+# originally 4160 candidates
+# missing data brought it down to 2157
 ```
 
-```{r message=FALSE, warning=FALSE}
-#create table with total primary votes per state
+
+```{r message = FALSE, warning = FALSE}
+# create table with total primary votes per state
+
 table2 <- table1 %>%
   group_by(cand_state) %>%
   summarise(total_state_vote = sum(primary_votes))
 ```
 
-```{r}
-#Importing state population from excel
+
+```{r message = FALSE, warning = FALSE}
+# Importing state population data from an excel file compiled by United States Census Bureau 
+
 state_population <- read.csv("state_population.csv")
 ```
 
-```{r}
+
+```{r message = FALSE, warning = FALSE}
+# data wrangle a state population table
+# computer average population 2011-2012
+
 population_data <- state_population %>%
-  rename(cand_state=table.with.row.headers.in.column.A.and.column.headers.in.rows.3.through.4...leading.dots.indicate.sub.parts., "pop_2011"= X, "pop_2012"=X.1) %>%
+  rename(
+    cand_state=table.with.row.headers.in.column.A.and.column.headers.in.rows.3.through.4...leading.dots.indicate.sub.parts.,
+         "pop_2011"= X, "pop_2012"=X.1) %>%
   mutate(avg_pop= (pop_2011 + pop_2012)/2)
 
 ```
 
-```{r}
 
-#Joining population_data and table2
-table3<-population_data %>%
+```{r message = FALSE, warning = FALSE}
+
+# Joining population_data and table2 
+
+table3 <- population_data %>%
   left_join(table2, by= "cand_state")
 ```
 
 
-```{r}
+```{r message = FALSE, warning = FALSE}
 
-#Proportions
+# Proportions
 final_table <- table3 %>%
   mutate(proportion= total_state_vote/avg_pop)
 ```
 
-```{r}
-#FUNCTION-WRITING
+
+```{r message = FALSE, warning = FALSE}
+# FUNCTION-WRITING
+
+# Tell me about any votes-cast as state proportion, equal to or above a proportion argument I provide
+
+# compute proportions for all states but filter according to the prop_arg provided and then plot
 
 state_turnout <- function(prop_arg) {
   final_table %>%
     mutate(proportion= total_state_vote/avg_pop) %>%
-    filter(proportion>prop_arg) %>%
+    filter(proportion>=prop_arg) %>%
     ggplot(aes(x = cand_state, y = proportion)) +
-    geom_col(fill = "purple", alpha = 0.5) + scale_y_continuous(labels=scales::percent)
+    geom_col(fill = "purple", alpha = 0.5) + 
+    scale_y_continuous(labels=scales::percent) + 
+    labs(title = "Votes cast for House candidates in 2011-2012, per state",
+       caption = "Federal Election Commission, United States of America") +
+    labs(x = "States") +
+    labs(y = "Votes cast as percentage of state pop. (primaries)")
 }
 
-state_turnout(0.12)
+state_turnout(0.10)
+
+# ^ Display how many states had equal to/over 10% of their population cast votes
 
 ```
 
+Our graph shows what percentage of the state population actually cast a vote for a House of Representative candidate, regardless of political party. 
 
-#Data Visualization
-```{r}
-graph1<- ggplot(data = final_table, aes(x=cand_state, y= proportion)) +
-  geom_col(fill="purple", alpha= 0.5)
+Our graph shows that out of 51 states, only 23 states managed to get 10% or more of their state population to cast any votes for House of Representative candidates running within their state. Only Washington and D.C. were able to get over 20% of their populations to cast votes for candidates, Republican, Democrat or otherwise. 
 
-graph1 +
-  scale_y_continuous(labels=scales::percent)
+That may seem to be quite a dismal turnout, but the implications of these proportions differ depending on state population sizes. 
+For instance, even though D.C. stands out as the leading state/district in state voter proportions, with all candidates managing to get over 60% of the state vote combined, it has one of the smallest populations in the country (only 627,902, compared to California's 3,784,3967.5) And so even though only 12.5% of California's state population voted, it's a greater number of people voting than in D.C.
+
+However, the graphic does give rise to a very important question for all states: why is voting participation so low on a state level? Because 12.5% is still a very small number for California, and the answer to the voter-participation question is important to inform policies which increase voter turnout and participation.
+
+There are a whole range of potential reasons, the most immediate of which is how young a state's population is, on average. If a large number of a state's population is not of voting age, this will automatically shorten the bars on our graph. Since our population data from the US Census Bureau was not limited to those of voting age, that is a potential shortcoming of our graphic. 
+
+Regardless, the graphic still points out how many people do not cast votes in each state. Why?
+It could be because they are not registered to vote, decided not to cast a vote or their legal status does not allow them to vote, which includes undocumented people and those who have worked and lived in the US for years (resident aliens) but have not gained voting rights. 
+
+Only when we consider these very large demographics of people and consider why they are not voting, can we figure out how to increase civic engagement across states. 
+
+
+**Footnotes:**
+
+Federal Election Commission, U.S.A.
+
+United States Census Bureau
+
+GitHub repository: 
+
+https://github.com/zazharr/sds192-mp2
+
+https://github.com/zazharr/sds192-mp2.git
+
+***
+
+*Word count:*
+```{r message = FALSE, warning = FALSE}
+wordcountaddin::word_count()
 ```
-
-
-```{r}
-#r wordcountaddin::word_count()
-```
-
-blog:
-House of Rep. candidates from each state received a proportion of vote within the state. DC candidates received over 60% of state vote, implying that 40% of population is either not registered to vote, is not of voting age or decided not to cast a vote. The data graphic shows voter turnout per state, and that all candidates have very small voting populations within their state whose vote they are fighting to gain.
-
