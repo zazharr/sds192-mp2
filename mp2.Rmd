@@ -1,7 +1,7 @@
 ---
 title: "Mini-Project 2"
-author: "Zoya and Ruth"
-date: "March 20, 2019"
+author: "Zoya Azhar and Ruth Tekleab Mekbib"
+date: "March 24, 2019"
 output:
   html_document:
     code_folding: hide
@@ -118,8 +118,9 @@ state_turnout(0.10)
 ```
 
 Our graph shows what percentage of the state population actually cast a vote for a House of Representative candidate, regardless of political party. 
+[In our code we wrote a function which sifts through data according to a proportion argument we input, to output the states which had voter turnout (as a proportion of state population) equal to or greater than the proportion argument.]
 
-Our graph shows that out of 51 states, only 23 states managed to get 10% or more of their state population to cast any votes for House of Representative candidates running within their state. Only Washington and D.C. were able to get over 20% of their populations to cast votes for candidates, Republican, Democrat or otherwise. 
+Our graph shows that out of 50 states, only 23 states managed to get 10% or more of their state population to cast any votes for House of Representative candidates running within their state. Only the state of Washington and D.C. were able to get over 20% of their populations to cast votes for candidates, Republican, Democrat or otherwise. D.C's turnout is probably correlated with it being the political capital.
 
 That may seem to be quite a dismal turnout, but the implications of these proportions differ depending on state population sizes. 
 For instance, even though D.C. stands out as the leading state/district in state voter proportions, with all candidates managing to get over 60% of the state vote combined, it has one of the smallest populations in the country (only 627,902, compared to California's 3,784,3967.5) And so even though only 12.5% of California's state population voted, it's a greater number of people voting than in D.C.
